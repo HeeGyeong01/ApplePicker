@@ -1,23 +1,21 @@
 package todo.swu.applepicker;
 
-import com.google.firebase.Timestamp;
-
 public class TaskItem {
-    Timestamp timestamp;
+    String timestamp;
     String subject;
     String part;
     boolean achievement;
 
     public TaskItem(){}
 
-    public TaskItem(Timestamp timestamp, String subject, String part, boolean achievement) {
+    public TaskItem(String timestamp, String subject, String part, boolean achievement) {
         this.timestamp = timestamp;
         this.subject = subject;
         this.part = part;
         this.achievement = achievement;
     }
 
-    public Timestamp getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     };
 
@@ -33,7 +31,7 @@ public class TaskItem {
         return achievement;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 

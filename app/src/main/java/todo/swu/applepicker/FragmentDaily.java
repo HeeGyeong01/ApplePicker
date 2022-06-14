@@ -6,7 +6,6 @@ import android.os.Bundle;
 import static android.content.ContentValues.TAG;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,17 +21,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -72,7 +66,7 @@ public class FragmentDaily extends Fragment {
                              Bundle savedInstanceState) {
         View myView = inflater.inflate(R.layout.fragment_daily, container, false);
 
-        //이 버튼을 클릭하면 달력이 호출됨.
+        //이 ImageButton 클릭하면 달력이 호출됨.
         iButton_calendar = (ImageButton) myView.findViewById(R.id.iButton_calendar);
 
         tv_date = (TextView) myView.findViewById(R.id.tv_date);
@@ -88,17 +82,16 @@ public class FragmentDaily extends Fragment {
         //Access a Firestore
         db = FirebaseFirestore.getInstance();
 
-        //Task RecyclerView에 표시할 데이터 리스트 생성.
+        //Task RecyclerView에 표시할 데이터 리스트 생성
         taskItemList = new ArrayList<TaskItem>();
-        //RecyclerView에 LinearLayoutManager 객체 지정, 어댑터 연결
+        //RecyclerView에 LinearLayoutManager 객체 지정
         taskRecyclerView = (RecyclerView) myView.findViewById(R.id.recyclerView_task);
         taskRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        taskAdapter = new TaskAdapter(taskItemList);
-        taskRecyclerView.setAdapter(taskAdapter);
 
-        //Memo RecyclerView에 표시할 데이터 리스트 생성.
+
+        //Memo RecyclerView에 표시할 데이터 리스트 생성
         memoItemList = new ArrayList<MemoItem>();
-        //RecyclerView에 LinearLayoutManager 객체 지정, 어댑터 연결.
+        //RecyclerView에 LinearLayoutManager 객체 지정, 어댑터 연결
         RecyclerView memoRecyclerView = (RecyclerView) myView.findViewById(R.id.recyclerView_memo);
         memoRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         memoAdapter = new MemoAdapter(memoItemList);
@@ -123,7 +116,7 @@ public class FragmentDaily extends Fragment {
             }
             @Override
             public void afterTextChanged(Editable editable) {
-                edit_dDay.setTextColor(getActivity().getResources().getColor(R.color.green_text));
+                edit_dDay.setTextColor(getResources().getColor(R.color.green_text));
                 edit_dDay.setBackground(null);
             }
         });
@@ -190,12 +183,7 @@ public class FragmentDaily extends Fragment {
 
 
         iButton_task_add.setOnClickListener(v -> {
-            Timestamp timestamp = Timestamp.now();
-            taskItemList.add(new TaskItem(timestamp, edit_subject.getText().toString(),
-                edit_part.getText().toString(), false));
-
-            addTaskDB(timestamp);
-            EventChangeListener();
+            addTaskDB(); //DB의 task 컬랙션에 document 추가함
             Log.e(TAG, "DB에 Task 저장됨 => ");
 
             edit_subject.setText(null);
@@ -203,24 +191,23 @@ public class FragmentDaily extends Fragment {
         });
 
         iButton_memo_add.setOnClickListener(v -> {
-            // 리사이클러뷰에 SimpleTextAdapter 객체 지정.
+
         });
 
-        // Inflate the layout for this fragment
         return myView;
-    } //onCreateView End.
+    } //onCreateView() End.
 
 
     //오늘날짜에 해당하는 데이터 불러와 화면에 보여줌.
     @SuppressLint("LongLogTag")
     public void initFragment() {
         //오늘 날짜 얻고 date 표시함.
-        Log.e("이게 2번 실행되나", "환장");
+        Log.e(TAG, "initFragment 호출됨");
         tv_date.setText(getCurrentDate());
         Date now = new Date();
         String dateToday = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(now);
         currentDate = dateToday;
-        Log.e(" onCreateView 안의 currentDate 변수", currentDate);
+        Log.e("currentDate 변수: ", currentDate);
 
         //Create field
         dailyMap = new HashMap<>();
@@ -228,10 +215,10 @@ public class FragmentDaily extends Fragment {
 
         //오늘 날짜에 저장된 데이터 불러와서 EditText 3개에 setText()하기
         db.collection("daily")
-            .document(dateToday)//선택한 날짜에 해당하는 데이터 유무 확인
+            .document(dateToday)
             .get()
             .addOnSuccessListener(snapShotData -> {
-                if (snapShotData.exists()) {//선택한 날짜에 저장된 데이터가 있는 경우 해당 data 갖고와서 화면에 뿌려줌.
+                if (snapShotData.exists()) {//선택한 날짜에 저장된 데이터가 있는 경우, 해당 data 갖고와서 화면에 뿌려줌.
                     Log.e("선택한 날짜에 저장된 데이터가 있는 경우 해당 data 갖고와서 화면에 뿌려줌.", dateToday);
                     String dDay = (String) snapShotData.getData().get("dDay");
                     String comment = (String) snapShotData.getData().get("comment");
@@ -240,8 +227,7 @@ public class FragmentDaily extends Fragment {
                     edit_dDay.setText(dDay);
                     edit_comment.setText(comment);
                     edit_total_time.setText(totalTime);
-                } else {//선택한 날짜에 해당하는 데이터가 없는 경우
-                    //새로 만들어서 DB에 추가함
+                } else {//선택한 날짜에 해당하는 데이터가 없는 경우, 새로 만들어서 DB에 저장함
                     Log.e("선택한 날짜에 해당하는 데이터가 없는 경우", dateToday);
                     db.collection("daily").document(dateToday)
                         .set(dailyMap)
@@ -253,9 +239,9 @@ public class FragmentDaily extends Fragment {
                 }
             }).addOnFailureListener(e -> e.printStackTrace());
 
-        //오늘 날짜에 저장된 데이터 불러와 RecyclerView 2개에 setText()하기
+        //오늘 날짜에 저장된 데이터 불러와 RecyclerView 2개에 setText()함
         Query query = db.collection("daily").document(dateToday)
-            .collection("task").orderBy("createdAt");
+            .collection("task").orderBy("timestamp");
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -264,7 +250,8 @@ public class FragmentDaily extends Fragment {
                         TaskItem obj = doc.toObject(TaskItem.class);
                         taskItemList.add(obj);
                     }
-                    taskAdapter.notifyDataSetChanged();
+                    taskAdapter = new TaskAdapter(taskItemList);
+                    taskRecyclerView.setAdapter(taskAdapter);
                 } else {
                     Log.e(TAG, "Recyclerview 초기화 else 부분");
                 }
@@ -272,6 +259,7 @@ public class FragmentDaily extends Fragment {
         });
     }
 
+    //달력에서 날짜 선택한 후 호출되는 메소드.
     @SuppressLint("LongLogTag")
     public void processDatePickerResult(String year, String month, String day, String day_of_week, String datePicked) {
         tv_date.setText(month + "/" + day + "(" + day_of_week + ")");
@@ -281,13 +269,13 @@ public class FragmentDaily extends Fragment {
         dailyMap = new HashMap<>();
         dailyMap.put("date", datePicked);
 
-        //Edittext 3개 표시
+        //변경된 날짜에 해당하는 Data를 DB에서 가져와 Edittext 3개에 setText()함
         db.collection("daily")
-            .document(datePicked) //선택한 날짜에 해당하는 데이터 유무 확인
+            .document(datePicked)
             .get()
             .addOnSuccessListener(snapShotData -> {
-                if (snapShotData.exists()) {//선택한 날짜에 저장된 데이터가 있는 경우 해당 data 갖고와서 화면에 뿌려줌.
-                    Log.e("선택한 날짜에 저장된 데이터가 있는 경우 해당 data 갖고와서 화면에 뿌려줌.", currentDate);
+                if (snapShotData.exists()) {//선택한 날짜에 저장된 데이터가 있는 경우, 해당 data 갖고와서 화면에 나타냄
+                    Log.e("선택한 날짜에 저장된 데이터가 있는 경우 해당 data 갖고와서 화면에 나타냄.", datePicked);
                     String dDay = snapShotData.getString("dDay");
                     String comment = snapShotData.getString("comment");
                     String totalTime = snapShotData.getString("totalTime");
@@ -296,8 +284,7 @@ public class FragmentDaily extends Fragment {
                     edit_comment.setText(comment);
                     edit_total_time.setText(totalTime);
 
-                } else {//선택한 날짜에 해당하는 데이터가 없는 경우
-                    //새로 만들어서 DB에 데이터 추가함
+                } else {//선택한 날짜에 해당하는 데이터가 없는 경우, 새로 만들어서 DB에 데이터 추가함
                     Log.e("선택한 날짜에 해당하는 데이터가 없는 경우", currentDate);
                     db.collection("daily").document(datePicked)
                         .set(dailyMap)
@@ -306,29 +293,31 @@ public class FragmentDaily extends Fragment {
                         }).addOnFailureListener(e -> {
                             Log.e(TAG, "Error adding document", e);
                         });
+                    edit_dDay.setText(null);
+                    edit_comment.setText(null);
+                    edit_total_time.setText(null);
                 }
             }).addOnFailureListener(e -> e.printStackTrace());
 
-        //Task
+        //변경된 날짜에 해당하는 Data를 DB에서 가져와 Task RecyclerView에 나타냄
         taskItemList = new ArrayList<TaskItem>();
         db.collection("daily").document(datePicked)
-            .collection("task").orderBy("createdAt")
-            .addSnapshotListener(new EventListener<QuerySnapshot>() {
+            .collection("task").orderBy("timestamp")
+            .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
-                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                    if (error != null) {
-                        Log.e("Firestore Error", error.getMessage());
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                            TaskItem obj = doc.toObject(TaskItem.class);
+                            taskItemList.add(obj);
+                        }
+                        taskAdapter = new TaskAdapter(taskItemList);
+                        taskRecyclerView.setAdapter(taskAdapter);
+                    } else {
+                        Log.e(TAG, "Recyclerview 초기화 else 부분");
                     }
-                    for (DocumentSnapshot dc : value.getDocuments()) {
-                        TaskItem obj = dc.toObject(TaskItem.class);
-                        taskItemList.add(obj);
-                    }
-                    //taskAdapter.notifyDataSetChanged();
-                    taskAdapter = new TaskAdapter(taskItemList);
-                    taskRecyclerView.setAdapter(taskAdapter);
                 }
             });
-
     }
 
     //EditText 3개에 변경사항 생길때마다 DB 업데이트함.
@@ -344,28 +333,34 @@ public class FragmentDaily extends Fragment {
             });
     }
 
-    //RecyclerView Task에 입력&변경사항 생길때마다 DB 업데이트함.
+    //RecyclerView Task에 입력할 때 DB 추가함
     @SuppressLint("LongLogTag")
-    public void addTaskDB(Timestamp timestamp) {
+    public void addTaskDB() {
+        String timestamp = String.valueOf(Timestamp.now());
+        taskItemList.add(new TaskItem(timestamp, edit_subject.getText().toString(),
+            edit_part.getText().toString(), false));
+
         Map<String, Object> taskMap = new HashMap<>();
-        taskMap.put("createdAt", timestamp);
+        taskMap.put("timestamp", timestamp);
         taskMap.put("subject", edit_subject.getText().toString());
         taskMap.put("part", edit_part.getText().toString());
         taskMap.put("achievement", false);
 
-        //task 업데이트.
+        //task 컬랙션의 document 추가
         db.collection("daily").document(currentDate)
             .collection("task")
-            .document(timestamp.toString()).set(taskMap)
+            .document(timestamp).set(taskMap)
             .addOnSuccessListener(documentReference -> {
                 Log.e(TAG, "DocumentSnapshot added with ID: ");
             }).addOnFailureListener(e -> {
                 Log.e(TAG, "Error adding document", e);
             });
+        taskAdapter.notifyDataSetChanged();
+
     }
 
 
-    //오늘 날짜 얻기.
+    //오늘 날짜 얻는 메소드
     public String getCurrentDate() {
         Calendar now = Calendar.getInstance();
         int month = now.get(Calendar.MONTH) + 1;
@@ -398,28 +393,5 @@ public class FragmentDaily extends Fragment {
         }
         return month + "/" + day + "(" + day_of_week + ")";
     }
-
-
-    public void EventChangeListener() {
-        taskItemList = new ArrayList<TaskItem>();
-        db.collection("daily").document(currentDate)
-            .collection("task").orderBy("createdAt")
-            .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                    if (error != null) {
-                        Log.e("Firestore Error", error.getMessage());
-                    }
-                    for (DocumentChange dc : value.getDocumentChanges()) {
-                        if (dc.getType() == DocumentChange.Type.ADDED) {
-                            TaskItem obj = dc.getDocument().toObject(TaskItem.class);
-                            taskItemList.add(obj);
-                        }
-                        taskAdapter.notifyDataSetChanged();
-                    }
-                }
-            });
-    }
-
 
 }

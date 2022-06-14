@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         this.taskList = list;
     }
 
-    // onCreateViewHolder() - 아이템 뷰를 위한 뷰홀더 객체 생성하여 리턴.
+    // onCreateViewHolder() - 아이템 뷰를 위한 ViewHolder 객체 생성하여 리턴.
     @Override
     public TaskAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
@@ -40,14 +39,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         return new TaskAdapter.ViewHolder(view);
     }
 
-    // onBindViewHolder() - position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시.
+    // onBindViewHolder() - position에 해당하는 데이터를 ViewHolder의 아이템뷰에 표시.
     @Override
     public void onBindViewHolder(TaskAdapter.ViewHolder holder, int position) {
-        itemForListener = taskList.get(position);
         holder.onBind(taskList.get(position));
     }
 
-    // 아이템 뷰를 저장하는 뷰홀더 클래스.
+    // 아이템 뷰를 저장하는 ViewHolder 클래스.
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView tv_subject;
         TextView tv_part;
@@ -61,15 +59,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             tv_part = (TextView) itemView.findViewById(R.id.tv_part);
             iv_apple = (ImageView) itemView.findViewById(R.id.iv_apple);
 
+            //사과(성취도) ImageView 리스너.
             iv_apple.setOnClickListener(view -> {
+                itemForListener = taskList.get(getAdapterPosition());
+                String timestamp = itemForListener.getTimestamp();
+                //achievement 변수 switch해서 ImageView의 이미지 리소스 교체.
                 itemForListener.switchAchievement();
                 boolean achievement = itemForListener.getAchievement();
                 iv_apple.setImageResource(getImage(achievement));
-                Timestamp timestamp = itemForListener.getTimestamp();
 
-                //DB의 achivement필드 update.
+                Log.e(itemForListener.getSubject(), "itemForListener.getSubject() 반환값");
+                Log.e(itemForListener.getTimestamp(), "itemForListener.getTimestamp() 반환값");
+                Log.e(currentDate, "achievement 필드 업데이트: currentDate 값");
+                //DB의 achievement필드 update.
                 db.collection("daily").document(currentDate)
-                    .collection("task").document(timestamp.toString())
+                    .collection("task").document(timestamp)
                     .update("achievement", achievement)
                     .addOnSuccessListener(documentReference -> {
                         Log.e(TAG, "DocumentSnapshot updated with ID: ");
@@ -93,7 +97,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             }
             return 0;
         }
-
     }
 
     public void setPostList(ArrayList<TaskItem> list) {
