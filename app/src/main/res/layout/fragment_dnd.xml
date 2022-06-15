@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,6 +6,7 @@
     android:layout_height="match_parent">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -14,24 +14,21 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="30dp">
+            android:layout_margin="20dp">
 
             <TableLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_margin="0dp"
-                android:layout_marginStart="16dp"
                 android:stretchColumns="1"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:layout_editor_absoluteY="157dp">
-
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+                <!--                android:layout_marginHorizontal="16dp"-->
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/green_dark">
 
                     <TextView
-                        android:layout_width="170dp"
                         android:layout_height="wrap_content"
                         android:background="@color/white"
                         android:padding="3dip"
@@ -39,18 +36,17 @@
                         android:textAlignment="center"
                         android:textColor="@color/green_dark"
                         android:textSize="20sp" />
-
-
+                    <!--                    android:layout_width="170dp"-->
                     <TextView
-                        android:layout_width="170dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="2dp"
                         android:background="@color/white"
+                        android:layout_marginStart="2dp"
                         android:padding="3dip"
                         android:text="내용"
                         android:textAlignment="center"
                         android:textColor="@color/green_dark"
                         android:textSize="20sp" />
+<!--                    android:layout_marginStart="2dp"-->
                 </TableRow>
 
                 <View
@@ -62,25 +58,23 @@
                     android:background="@drawable/outline"
                     app:layout_constraintTop_toBottomOf="@id/tv_tasks" />
 
-
                 <TableRow android:background="@drawable/inline">
 
                     <TextView
                         android:id="@+id/sub1"
                         android:background="@color/white"
                         android:hint="과목을 드래그 하세요."
-                        android:padding="3dip"
-                        android:textSize="17sp" />
+                        android:padding="6dip"
+                        android:textSize="12dp" />
 
                     <TextView
-
                         android:id="@+id/cont1"
                         android:layout_marginStart="2dp"
                         android:background="@color/white"
                         android:hint="내용을 드래그 하세요."
-                        android:padding="3dip"
+                        android:padding="6dip"
                         android:textAlignment="textStart"
-                        android:textSize="17sp" />
+                        android:textSize="12dp" />
                 </TableRow>
 
                 <View
@@ -227,12 +221,9 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/date_line"
                     app:layout_constraintWidth_percent="0.55" />
-
-
             </TableLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottom_sheet"
@@ -242,108 +233,101 @@
         android:orientation="vertical"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
-        <androidx.core.widget.NestedScrollView
+        <HorizontalScrollView
             android:id="@+id/scrollView_subject"
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:fillViewport="true"
+            android:layout_marginHorizontal="20dp"
+            app:layout_constraintBottom_toTopOf="@id/constraintLayout2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
+                android:orientation="horizontal"
                 android:id="@+id/constraintLayout"
                 android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="30dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp">
 
                 <TextView
                     android:id="@+id/dnd_kor"
                     android:layout_width="70dp"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_height="35dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginVertical="8dp"
                     android:background="@drawable/edge"
                     android:backgroundTint="#F8F2BF"
                     android:gravity="center"
                     android:text="국어"
                     android:textAlignment="center"
                     android:textColor="@color/green_text"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/dnd_math"
                     android:layout_width="70dp"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="90dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_height="35dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginVertical="8dp"
                     android:background="@drawable/edge"
                     android:backgroundTint="#C0E1FB"
                     android:gravity="center"
                     android:text="수학"
                     android:textAlignment="center"
                     android:textColor="@color/green_text"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/dnd_eng"
                     android:layout_width="70dp"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="180dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_height="35dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginVertical="8dp"
                     android:background="@drawable/edge"
                     android:backgroundTint="#FBC2D5"
                     android:gravity="center"
                     android:text="영어"
                     android:textAlignment="center"
                     android:textColor="@color/green_text"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/dnd_book"
                     android:layout_width="70dp"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="270dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_height="35dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginVertical="8dp"
                     android:background="@drawable/edge"
                     android:backgroundTint="#D6C1FB"
                     android:gravity="center"
                     android:text="독서"
                     android:textAlignment="center"
                     android:textColor="@color/green_text"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:textSize="14sp" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.core.widget.NestedScrollView>
+                <TextView
+                    android:id="@+id/dnd_workout"
+                    android:layout_width="70dp"
+                    android:layout_height="35dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="@drawable/edge"
+                    android:backgroundTint="#F8F2BF"
+                    android:gravity="center"
+                    android:text="운동"
+                    android:textAlignment="center"
+                    android:textColor="@color/green_text"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </HorizontalScrollView>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout2"
             android:layout_width="0dp"
             android:layout_height="170dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
+            android:layout_marginHorizontal="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/scrollView_subject">
@@ -355,33 +339,28 @@
                 android:background="@color/gray_inline"
                 app:layout_constraintTop_toTopOf="parent" />
 
-
             <View
                 android:id="@+id/inline2"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/gray_inline"
                 app:layout_constraintBottom_toBottomOf="parent" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout3"
             android:layout_width="0dp"
             android:layout_height="60dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
+            android:layout_marginHorizontal="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
-
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
-
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/dnd_next"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="45dp"
                 android:layout_marginEnd="8dp"
                 android:text="저장"
                 android:textSize="14sp"
@@ -390,14 +369,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:strokeColor="@color/green_dark"
-                app:strokeWidth="2dp"
+                app:strokeWidth="1.5dp"
                 tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
